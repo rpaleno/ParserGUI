@@ -23,7 +23,7 @@ class lexer:
 
 
             string = string.strip()
-            result = re.match(r'^[A-Za-z]+', string)  
+            result = re.match(r'^[A-Za-z]+', string)  #identifiers to be matched
             if (result != None):
                 result = re.match(r'[A-Za-z0-9]+', string)
                 tuple1 = ("identifier",result.group())
@@ -32,7 +32,7 @@ class lexer:
                 string = string.strip()
 
 
-            result = re.match(r'[\(|\)|;|:|"]', string)
+            result = re.match(r'[\(|\)|;|:|"]', string) #seperators to be matched
             if (result != None):
                 tuple1 = ("seperator",result.group())
                 value = result.group()
@@ -41,7 +41,7 @@ class lexer:
                 string = string.strip()
 
                 if(value == '"'):
-                    result = re.match(r'[A-Za-z\s]+', string)
+                    result = re.match(r'[A-Za-z\s]+', string) #string literals to be matched
                     if (result != None):
                         tuple1 = ("str_literal",result.group())
                         self.tokenlist.append(tuple1)
@@ -58,7 +58,7 @@ class lexer:
                 string = string.strip()
 
         
-            result = re.match(r'[=|+|>|*]', string)
+            result = re.match(r'[=|+|>|*]', string) #operators to be matched
             if (result != None):
                 tuple1 = ("operator",result.group())
                 self.tokenlist.append(tuple1)
@@ -66,7 +66,7 @@ class lexer:
                 string = string.strip()
 
             
-            result = re.match(r'\d+\.\d+', string)
+            result = re.match(r'\d+\.\d+', string) #floats to be matched
             if (result != None):
                 tuple1 = ("float_literal",result.group())
                 self.tokenlist.append(tuple1)
@@ -74,7 +74,7 @@ class lexer:
                 string = string.strip()
 
             
-            result = re.match(r'^\d+', string)
+            result = re.match(r'^\d+', string) #int literals to be matched
             if (result != None):
                 tuple1 = ("int_literal",result.group())
                 self.tokenlist.append(tuple1)
@@ -188,7 +188,7 @@ class MyFirstGUI:
             self.accept_token()
         self.multi()
 
-    
+    #parent function of parse tree
     def exp(self):
         self.output2.insert(END, "\n#######Parse tree for line " + str(self.count) + "#######\n")
         self.output2.insert(END, "\n----parent node exp, finding children nodes:")
@@ -227,7 +227,7 @@ class MyFirstGUI:
         self.output2.insert(END, "Child node (internal): math")
         self.math()
 
-
+    #parse tree for comparison expression
     def comparison_exp(self):
 
         self.output2.insert(END, "\n----parent node comparison_exp, finding children nodes:\n")
@@ -260,7 +260,7 @@ class MyFirstGUI:
             return
 
     
-
+    #parse tree for if statement
     def if_exp(self):
 
         self.output2.insert(END, "\n#######Parse tree for line " + str(self.count) + "#######\n")
@@ -306,6 +306,7 @@ class MyFirstGUI:
             self.output2.insert(END, "expect : as the seventh element of the expression!\n")
             return
 
+    #parse tree for print statement
     def print_exp(self):
 
         self.output2.insert(END, "\n\n#######Parse tree for line " + str(self.count) + "#######\n")
@@ -376,35 +377,36 @@ class MyFirstGUI:
 
         
     def parser(self):
-        self.inToken=self.lex.tokenlist.pop(0)
-        if(self.count==1 or self.count==2):
+        self.inToken=self.lex.tokenlist.pop(0) #token is stored in tuple
+        if(self.count==1 or self.count==2): #first and second line of code in GUI must begin with keyword
             self.exp()
             if(self.inToken[1]==";"):
                 self.output2.insert(END, "child node (token):"+self.inToken[1])
                 self.output2.insert(END, "\nparse tree building success!\n")
                 return
-        if(self.count==3):
+        if(self.count==3): #third line of code in GUI must be if statement
             self.if_exp()
 
-        if(self.count==4):
+        if(self.count==4): #fourth line of code in GUI must be print statement
             self.print_exp()
 
 
-    
+    #Goes to the next line of code
     def nextline(self):        
         text = self.input.get('1.0', 'end').splitlines()
         self.lex.cutOneLineTokens(text[self.count2])
         if(text[self.count2]!=""):
             for item in self.lex.tokenlist:
-                self.output.insert(END,'<' + str(item[0]) + ', ' + str(item[1]) + '>')
+                self.output.insert(END,'<' + str(item[0]) + ', ' + str(item[1]) + '>') #display tokens from line of code to GUI
                 self.output.insert(END,'\n')
            
-            
+            #update line count
             self.lineoutput.delete(0,'end')
             self.count+=1
             self.lineoutput.insert(0,self.count)
             self.parser()
         
+        #go to nextline
         elif(text[self.count2]==""):
             self.output.insert(END,'\n')
             self.lex.tokenlist = []
@@ -415,18 +417,6 @@ class MyFirstGUI:
         self.lex.tokenlist = []
         self.count2+=1
         
-
-
-        
-    
-        
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
